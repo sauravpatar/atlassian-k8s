@@ -1,0 +1,9 @@
+kind: StorageClass
+apiVersion: storage.k8s.io/v1
+metadata:
+  name: efs-sc
+  namespace: atlassian
+  labels:
+    app.kubernetes.io/name: jira
+    app.kubernetes.io/component: atlassian
+provisioner: efs.csi.aws.com

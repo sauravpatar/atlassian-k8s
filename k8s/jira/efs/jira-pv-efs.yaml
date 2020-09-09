@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  namespace: atlassian
+  name: jira-efs-pv
+  labels:
+    app.kubernetes.io/name: jira
+    app.kubernetes.io/component: atlassian
+spec:
+  capacity:
+    storage: 5Gi
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: efs-sc
+  csi:
+    driver: efs.csi.aws.com
+    volumeHandle: fs-67b72cb6::fsap-0ef25b9bf1ac889e7
