@@ -16,24 +16,30 @@ spec:
     labels:
       app.kubernetes.io/name: jira
   spec:
+    terminationGracePeriodSeconds: 300
+    initContainers:
+        - name: jira-lockfile
+          securityContext:
+          image: busybox
+          command: ['sh', '-c', 'rm -f /var/atlassian/application-data/jira/.jira-home.lock']
+          volumeMounts:
+            - mountPath: "/var/atlassian/application-data/jira/"
+              name: jira-application-data
     containers:
       - name: jira-atlassian
-        image: atlassian/jira-software:7.13.13
+        image: atlassian/jira-software:8.12.1
         imagePullPolicy: IfNotPresent
         resources:
           requests:
-            cpu: "100m"
-            memory: "128M"
-          limits:
-            cpu: "4"
-            memory: "8Gi"
+            cpu: "1"
+            memory: "6Gi"
         ports:
         - containerPort: 8080
         readinessProbe:
             httpGet:
               port: 8080
               path: /status
-            initialDelaySeconds: 60
+            initialDelaySeconds: 180
             periodSeconds: 15
             successThreshold: 2
             failureThreshold: 2
@@ -48,7 +54,9 @@ spec:
           failureThreshold: 3
         envFrom:
         - configMapRef:
-            name: jira-atlassian-config
+            name: jira-atlassian-config-db
+        - configMapRef:
+            name: jira-atlassian-config-server
         env:
          - name: ATL_JDBC_PASSWORD
            valueFrom:

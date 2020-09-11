@@ -1,17 +1,19 @@
 apiVersion: v1
 kind: Service
 metadata:
- namespace: jira
- name: jira-atlassian-service
+ namespace: atlassian
+ name: jira-service
+ annotations:
+  service.beta.kubernetes.io/aws-load-balancer-ssl-cert: arn:aws:acm:ap-south-1:950713706936:certificate/dfe861da-b14e-4a3e-8cae-2e24ab1fff8d
  labels:
   app.kubernetes.io/name: jira
   app.kubernetes.io/component: atlassian
 spec:
  type: LoadBalancer
  ports:
-  - port: 80
+  - port: 443
     protocol: TCP
     targetPort: 8080
  selector:
   app.kubernetes.io/name: jira
-  app.kubernetes.io/component: atlassian
+  # app.kubernetes.io/component: atlassian
