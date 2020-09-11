@@ -1,0 +1,40 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  namespace: atlassian
+  name: atlassian-ingress
+  annotations:
+    kubernetes.io/ingress.class: alb
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: instance
+    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:ap-south-1:950713706936:certificate/dfe861da-b14e-4a3e-8cae-2e24ab1fff8d
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS":443}]'
+    alb.ingress.kubernetes.io/actions.ssl-redirect: '{"Type": "redirect", "RedirectConfig": { "Protocol": "HTTPS", "Port": "443", "StatusCode": "HTTP_301"}}'
+    alb.ingress.kubernetes.io/ssl-policy: ELBSecurityPolicy-TLS-1-1-2017-01
+  labels:
+    app.kubernetes.io/name: atlassian-ingress
+    app.kubernetes.io/component: atlassian
+spec:
+  rules:
+   - host: jira.devplusops.xyz
+     http:
+        paths:
+          - path: /*
+            backend:
+              serviceName: ssl-redirect
+              servicePort: use-annotation
+          - path: /*
+            backend:
+              serviceName: jira-service
+              servicePort: 8080
+   - host: confluence.devplusops.xyz
+     http:
+        paths:
+          - path: /*
+            backend:
+              serviceName: ssl-redirect
+              servicePort: use-annotation
+          - path: /*
+            backend:
+              serviceName: confluence-service
+              servicePort: 8090

@@ -4,6 +4,6 @@ metadata:
   name: efs-sc
   namespace: atlassian
   labels:
-    app.kubernetes.io/name: jira
+    app.kubernetes.io/name: atlassian-storage
     app.kubernetes.io/component: atlassian
 provisioner: efs.csi.aws.com

@@ -1,0 +1,66 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+ name: confluence
+ namespace: atlassian
+ labels:
+  app.kubernetes.io/name: confluence
+  app.kubernetes.io/component: atlassian
+spec:
+ replicas: 1
+ selector:
+  matchLabels:
+    app.kubernetes.io/name: confluence
+ template:
+  metadata:
+    labels:
+      app.kubernetes.io/name: confluence
+  spec:
+    terminationGracePeriodSeconds: 300
+    containers:
+      - name: confluence-atlassian
+        image: atlassian/confluence-software:8.12.1
+        imagePullPolicy: IfNotPresent
+        resources:
+          requests:
+            cpu: "1"
+            memory: "6Gi"
+        ports:
+        - containerPort: 8080
+        readinessProbe:
+            httpGet:
+              port: 8080
+              path: /status
+            initialDelaySeconds: 180
+            periodSeconds: 15
+            successThreshold: 2
+            failureThreshold: 2
+            timeoutSeconds: 5
+        livenessProbe:
+          httpGet:
+            path: /status
+            port: 8080
+          initialDelaySeconds: 60
+          periodSeconds: 60
+          successThreshold: 1
+          failureThreshold: 3
+        envFrom:
+        - configMapRef:
+            name: confluence-atlassian-config-db
+        - configMapRef:
+            name: confluence-atlassian-config-server
+        env:
+         - name: ATL_JDBC_PASSWORD
+           valueFrom:
+              secretKeyRef:
+               name: confluence-database-passowrd
+               key: dbpassword
+        volumeMounts:
+          - mountPath: "/var/atlassian/application-data/confluence"
+            name: confluence-application-data
+    volumes:
+        - name: confluence-application-data
+          persistentVolumeClaim:
+            claimName: confluence-efs-claim
+      
+      

@@ -2,16 +2,16 @@ apiVersion: v1
 kind: Service
 metadata:
  namespace: atlassian
- name: jira-service
+ name: confluence-service
  labels:
-  app.kubernetes.io/name: jira
+  app.kubernetes.io/name: confluence
   app.kubernetes.io/component: atlassian
 spec:
  type: NodePort
  ports:
   - name: http
-    port: 8080
-    targetPort: 8080
+    port: 8090
+    targetPort: 8090
     protocol: TCP
  selector:
-  app.kubernetes.io/name: jira
+  app.kubernetes.io/name: confluence
