@@ -19,17 +19,17 @@ spec:
     terminationGracePeriodSeconds: 300
     containers:
       - name: confluence-atlassian
-        image: atlassian/confluence-software:8.12.1
+        image: atlassian/confluence-software:7.4.3
         imagePullPolicy: IfNotPresent
         resources:
           requests:
             cpu: "1"
             memory: "6Gi"
         ports:
-        - containerPort: 8080
+        - containerPort: 8090
         readinessProbe:
             httpGet:
-              port: 8080
+              port: 8090
               path: /status
             initialDelaySeconds: 180
             periodSeconds: 15
@@ -39,7 +39,7 @@ spec:
         livenessProbe:
           httpGet:
             path: /status
-            port: 8080
+            port: 8090
           initialDelaySeconds: 60
           periodSeconds: 60
           successThreshold: 1
