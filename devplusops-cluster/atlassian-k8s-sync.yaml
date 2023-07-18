@@ -1,0 +1,14 @@
+Flag --validation has been deprecated, this arg is no longer used, all resources are validated using server-side apply dry-run
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: atlassian-k8s
+  namespace: flux-system
+spec:
+  interval: 1h0m0s
+  path: ./deploy
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: atlassian-k8s
